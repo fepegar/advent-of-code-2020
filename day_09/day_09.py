@@ -1,50 +1,25 @@
-import itertools
+import numpy as np
 
 
 class XMAS:
     def __init__(self, stream_text):
         self.stream = [int(n) for n in stream_text.splitlines()]
 
-    def get_combinations(self, stream):
-        combinations = []
-        sums = []
-        for a, b in itertools.combinations(stream, 2):
-            combinations.append((a, b))
-            sums.append(a + b)
-        return combinations, sums
-
-    def clean(self, combinations, sums, n):
-        result_combinations = []
-        result_sums = []
-        for c, s in zip(combinations, sums):
-            if n not in c:
-                result_combinations.append(c)
-                result_sums.append(s)
-        return result_combinations, result_sums
-
-    def update(self, combinations, sums, n):
-        used = []
-        result_combinations = []
-        result_sums = []
-        for (a, b), s in zip(combinations, sums):
-            result_combinations.append((a, b))
-            result_sums.append(s)
-            if a not in used:
-                result_combinations.append((a, n))
-                result_sums.append(a + n)
-            if b not in used:
-                result_combinations.append((b, n))
-                result_sums.append(b + n)
-        return result_combinations, result_sums
+    def get_sums(self, x):
+        xx, yy = np.meshgrid(x, x)
+        matrix = xx + yy
+        sums = np.tril(matrix, -1).flatten()
+        sums = sums[sums > 0]
+        return sums
 
     def run(self, preamble):
-        combinations, sums = self.get_combinations(self.stream[:preamble])
-        for i, n in enumerate(self.stream[preamble:]):
-            print(n)
+        i = preamble
+        while True:
+            sums = self.get_sums(self.stream[i - preamble : i])
+            n = self.stream[i]
             if n not in sums:
                 return n
-            combinations, sums = self.clean(combinations, sums, self.stream[i])
-            combinations, sums = self.update(combinations, sums, n)
+            i += 1
 
 if __name__ == "__main__":
     text = """35
