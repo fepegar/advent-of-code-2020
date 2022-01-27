@@ -21,6 +21,9 @@ class XMAS:
                 return n
             i += 1
 
+    def find_contiguous(self, preamble):
+        n = self.run(preamble)
+
 if __name__ == "__main__":
     text = """35
     20
